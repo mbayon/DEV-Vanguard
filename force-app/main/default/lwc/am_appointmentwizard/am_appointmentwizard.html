@@ -1,0 +1,94 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <template lwc:if={isOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+                    </svg>
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">
+                        {getHeaderLabel}
+                    </h1>
+                </div>
+                <div class="slds-modal__content slds-var-p-around_medium" id="modal-content-id-1">
+                    <!-- FRAME ONE -->
+                    <!-- Center and Specialty -->
+                    <template lwc:if={showFirstPage}>
+                        <lightning-combobox name="Cosmetic Centers" label="Cosmetic Center" value={selectedCenter.value}
+                            placeholder="Select your favourite cosmetic center" options={cosmeticCentersOptions}
+                            onchange={handleCenterChange} required></lightning-combobox>
+
+                        <lightning-map lwc:ref="map" map-markers={mapMarkers} list-view="hidden"
+                            onmarkerselect={handleMarkerSelect} selected-marker-value={selectedMarkerValue}
+                            options={mapOptions}>
+                        </lightning-map>
+
+                        <lightning-combobox name="Specialty" label="Specialty" value={selectedSpecialty.value} class="slds-var-p-top_small"
+                            placeholder="Select your the medical specialty" options={specialtiesOptions}
+                            onchange={handleSpecialtyChange} disabled={isCenterSelected} required></lightning-combobox>
+                    </template>
+
+                    <!-- FRAME TWO -->
+                    <!-- Select appointment date -->
+                    <template lwc:if={showSecondPage}>
+                        <c-am_dateselector available-days={availableDays} onselecteddate={onSelectedDate}></c-am_dateselector>
+                    </template>
+
+                    <!-- FRAME THREE -->
+                    <!-- Contact info -->
+                    <template lwc:if={showThirdPage}>
+                        <lightning-input required type="text" label="Name" placeholder="What's your name?" value={contactInfo.Name} onchange={onNameChange}></lightning-input>
+                        <lightning-input required type="email" label="Email" placeholder="Type your email here..." value={contactInfo.Email} onchange={onEmailChange}></lightning-input>
+                        <lightning-input required type="tel"  label="Phone" placeholder="We will call you to confirm your appointment" value={contactInfo.Phone} onchange={onPhoneChange}></lightning-input>
+                        <lightning-textarea type="text" label="Observations" placeholder="Anything else we need to know?" value={contactInfo.Observations} onchange={onObservationsChange}></lightning-textarea>
+                    </template>
+
+                    <!-- FRAME FOUR -->
+                    <!-- Confirmation -->
+                    <template lwc:if={showFourthPage}>
+                        <div class="letter slds-var-p-around_medium slds-var-m-bottom_small">
+                            Dear <span>{contactInfo.Name}</span>,<br><br>
+                            To sum up, we are going to create an appointment with a <span>{selectedSpecialty.label}</span> specialist in the <span>{selectedCenter.label}</span>.<br>
+                            We will send you a confirmation email to <span>{contactInfo.Email}</span> and call you to <span>{contactInfo.Phone}</span> for confirmation.<br>
+                            <template lwc:if={contactInfo.Observations}>
+                                And of course, we will take into consideration your notes:<br><span>{contactInfo.Observations}</span><br>
+                            </template>
+                            <br>Looking forward to see you!<br>
+                            Beauty Center Team
+                        </div>
+                    </template>
+
+                    <!-- PROGRESS STEPS -->
+                    <lightning-progress-indicator current-step={currentStep}>
+                        <lightning-progress-step label="Step One" value="step1">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Step Two" value="step2">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Step Three" value="step3">
+                        </lightning-progress-step>
+                        <lightning-progress-step label="Step Four" value="step4">
+                        </lightning-progress-step>
+                    </lightning-progress-indicator>
+                </div>
+
+                <!-- MODAL FOOTER - NAVIGATION BUTTONS -->
+
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" aria-label="Cancel and previous"
+                        onclick={onPreviousButtonClick}>
+                        {getPreviousButtonLabel}
+                    </button>
+                    <button class="slds-button slds-button_brand" onclick={onNextButtonClick} disabled={isNextDisabled}>
+                        {getNextButtonLabel}
+                    </button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+</template>

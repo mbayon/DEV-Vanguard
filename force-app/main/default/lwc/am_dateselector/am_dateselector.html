@@ -1,0 +1,81 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<div class="container">
+
+		<!-- DATE SELECTOR (CALENDAR) -->
+		<div class="date-selector">
+
+			<!-- Calendar Month Actions -->
+			<div class="slds-m-vertical_small slds-p-horizontal_medium slds-text-align_center">
+				<div class="actions">
+					<a id="left" onclick={previousMonth}>
+						<i class="fa fa-chevron-left"></i>
+					</a>
+					<div class="month-year">
+						&nbsp;{month}&nbsp;{year}&nbsp;
+					</div>
+					<a id="right" onclick={nextMonth}>
+						<i class="fa fa-chevron-right"></i>
+					</a>
+				</div>
+			</div>
+
+			<!-- Days of the Month -->
+			<div class="col-sm-10 col-sm-offset-1">
+				<table>
+					<template for:each={calendar} for:item="cal">
+						<tr key={cal}>
+							<template for:each={cal} for:item="day">
+
+								<!-- Day of the week (MON-SUN) -->
+								<template lwc:if={day.isHeader}>
+									<th key={day.value} class="header">
+										{day.value}
+									</th>
+								</template>
+								<!-- Day of the month (1-31) -->
+								<template lwc:elseif={day.isDay}>
+									<!-- Day available for selection -->
+									<template lwc:if={day.isAvailable}>
+										<td key={day.value} class="day">
+											<button data-weekday={day.weekDay} data-date={day.date}
+												class="dayButton dayAvailable" onclick={onDayClick}>{day.value}</button>
+										</td>
+									</template>
+									<!-- Day not available for selection -->
+									<template lwc:else>
+										<td key={day.value} class="day">
+											<button class="dayButton">{day.value}</button>
+										</td>
+									</template>
+								</template>
+								<!-- Empty spaces before 1 and after 31 -->
+								<template lwc:else>
+									<td key={day.value}>
+									</td>
+								</template>
+
+							</template>
+						</tr>
+					</template>
+				</table>
+			</div>
+
+		</div>
+
+		<!-- TIME SLOTS SELECTOR -->
+		<div class="time-selector">
+			<template lwc:if={areTimeSlots}>
+				<template for:each={timeSlots} for:item="slot">
+					<div key={slot.value} class="slot">
+						<button class="slotButton" onclick={onSlotClick} data-time={slot.value}>{slot.value}</button>
+					</div>
+				</template>
+			</template>
+			<template lwc:else>
+				<div class="timeSlotsPlaceholder">Select a day first to see the available slots.</div>
+			</template>
+		</div>
+
+	</div>
+</template>

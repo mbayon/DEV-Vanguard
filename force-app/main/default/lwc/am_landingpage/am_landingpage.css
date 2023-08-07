@@ -1,0 +1,116 @@
+/* MAIN CARD */
+
+.card {
+	height: 600px;
+	width: 900px;
+	margin: auto;
+	box-shadow: 0px 0px 10px #4f4e4c;
+
+	background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+/* NAV-BAR */
+
+.nav-bar {
+	margin-top: 10px;
+	font-family: "Poppins", sans-serif;
+}
+
+.nav-bar > a {
+	text-decoration: none;
+	color: black;
+	font-size: 18px;
+}
+
+.nav-bar > a:hover {
+	color: green;
+	text-shadow: 5px 5px 10px 5px green;
+}
+
+/* CARD TITLE */
+
+.text > h2 {
+	font-size: 50px;
+	margin-left: 60px;
+	margin-top: 80px;
+	font-family: "Open Sans", sans-serif;
+	color: white;
+	font-weight: bold;
+}
+
+.text > p {
+	max-width: 400px;
+	margin-left: 60px;
+	font-family: "Karla", sans-serif;
+	color: white;
+}
+
+hr {
+	width: 200px;
+	height: 3px;
+	border-radius: 10px;
+	margin-left: 60px;
+	border-style: none;
+	background-color: white;
+}
+
+/* BUTTON BAR */
+
+.button-bar {
+	margin-top: 20px;
+	margin-left: 60px;
+}
+
+.button-cita {
+	width: 200px;
+	height: 40px;
+	color: #fff;
+	font-family: "Lato", sans-serif;
+	font-weight: 500;
+	cursor: pointer;
+	position: relative;
+	background: transparent;
+	z-index: 1;
+  border: 2px solid white;
+	border-radius: 5px;
+	transition: all 0.3s ease;
+}
+
+.button-cita:after {
+	position: absolute;
+	content: "";
+	width: 0;
+	height: 100%;
+	top: 0;
+	right: 0;
+	z-index: -1;
+	background-color: #b621fe;
+	border-radius: 5px;
+	transition: all 0.3s ease;
+}
+
+.button-cita:hover {
+	color: #fff;
+}
+
+.button-cita:hover:after {
+	left: 0;
+	width: 100%;
+}
+.button-cita:active {
+	top: 2px;
+}

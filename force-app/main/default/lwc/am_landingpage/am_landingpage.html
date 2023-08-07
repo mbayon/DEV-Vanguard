@@ -1,0 +1,24 @@
+<!-- sldsValidatorIgnore -->
+<template>
+	<div class="card">
+		<div class="nav-bar">
+			<a href="#">🌿</a>
+		</div>
+		<div class="text">
+			<h2>
+				BEAUTY CENTER
+			</h2>
+			<p>
+				¡Luce y siéntete increíble con nosotros! Ofrecemos una amplia gama de servicios de belleza, desde cortes de cabello y
+				coloración hasta peinados y tratamientos faciales. Reserva tu cita hoy mismo y descubre
+				la diferencia que podemos hacer en tu apariencia y tu confianza.
+			</p>
+			<hr />
+			<div class="button-bar">
+				<button type="button" class="button-cita" onclick={onPideCitaClick}>PIDE CITA</button>
+			</div>
+		</div>
+	</div>
+
+	<c-am_appointmentwizard is-open={isAppointmentModalOpen} onclose={onAppointmentModalClosed}></c-am_appointmentwizard>
+</template>
