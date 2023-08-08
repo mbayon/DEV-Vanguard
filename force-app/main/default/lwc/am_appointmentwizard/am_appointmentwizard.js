@@ -1,15 +1,15 @@
 /**
- * @description       : 
+ * @description       : Appointment wizard modal with its four screens
  * @author            : mbayon
- * @group             : 
- * @last modified on  : 08-07-2023
+ * @last modified on  : 08-08-2023
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
-**/
+ **/
 import LightningModal from "lightning/modal";
 import { track, api, wire } from "lwc";
 
 import getCosmeticCentersList from "@salesforce/apex/AM_AppointmentWizardController.getCosmeticCentersList";
 import getAvalabilityBySpecialty from "@salesforce/apex/AM_AppointmentWizardController.getAvalabilityBySpecialty";
+import createNewAppointment from "@salesforce/apex/AM_AppointmentWizardController.createNewAppointment";
 
 export default class MyModal extends LightningModal {
 	@api isOpen;
@@ -17,8 +17,8 @@ export default class MyModal extends LightningModal {
 	// Cosmetic Centers Combobox
 	@track cosmeticCentersOptions = [];
 	selectedCenter = {
-		label: '',
-		value: '',
+		label: "",
+		value: "",
 	};
 	@track isCenterSelected = true;
 
@@ -34,21 +34,23 @@ export default class MyModal extends LightningModal {
 	specialtiesByCenter;
 	@track specialtiesOptions = [];
 	selectedSpecialty = {
-		label: '',
-		value: '',
+		label: "",
+		value: "",
 	};
 
+	// Date info
 	@track availableDays;
 	selectedDate;
 
-	@track currentStep = "step1";
+	// Contact Info
+	@track contactInfo = {
+		Name: "",
+		Email: "",
+		Phone: "",
+		Observations: "",
+	};
 
-	contactInfo = {
-		Name: '',
-		Email: '',
-		Phone: '',
-		Observations: '',
-	}
+	@track currentStep = "step1";
 
 	// Main data connection with Salesforce - Get all data needed
 	@wire(getCosmeticCentersList)
@@ -72,8 +74,9 @@ export default class MyModal extends LightningModal {
 						},
 						value: center.Id,
 						title: center.Name,
+						// ? Sets a pink start as icon
+						// TODO Improve the map visuals
 						// mapIcon: {
-						// 	// Sets a pink start as icon
 						// 	path: "M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z",
 						// 	fillColor: "#e73c7e	",
 						// 	fillOpacity: 1,
@@ -93,33 +96,42 @@ export default class MyModal extends LightningModal {
 		}
 	}
 
-	// Cosmetic Center Combobox - Handles the change of value
+	/**
+	 * Cosmetic Center Combobox - Handles the change of value
+	 * @param {*} event
+	 */
 	handleCenterChange(event) {
 		this.setSpecialtiesByCenter(event.detail.value);
 		this.isCenterSelected = false;
 		this.selectedMarkerValue = event.detail.value; // TODO: Doesnt work, map component limitation
 
-		let selectedLabel = this.cosmeticCentersOptions.find(opt => opt.value === event.detail.value).label;
+		let selectedLabel = this.cosmeticCentersOptions.find((opt) => opt.value === event.detail.value).label;
 		this.selectedCenter = {
 			label: selectedLabel,
-			value: event.target.selectedMarkerValue
+			value: event.target.selectedMarkerValue,
 		};
 	}
 
-	// Cosmetic Center Map - Handles the change of marker
+	/**
+	 * Cosmetic Center Map - Handles the change of marker
+	 * @param {*} event
+	 */
 	handleMarkerSelect(event) {
 		this.setSpecialtiesByCenter(event.target.selectedMarkerValue);
 		this.isCenterSelected = false;
 		this.selectedMarkerValue = event.target.selectedMarkerValue;
-		
-		let selectedLabel = this.cosmeticCentersOptions.find(opt => opt.value === event.target.selectedMarkerValue).label;
+
+		let selectedLabel = this.cosmeticCentersOptions.find((opt) => opt.value === event.target.selectedMarkerValue).label;
 		this.selectedCenter = {
 			label: selectedLabel,
-			value: event.target.selectedMarkerValue
+			value: event.target.selectedMarkerValue,
 		};
 	}
 
-	// Set the Specialties combobox values based on a Center
+	/**
+	 * Set the Specialties combobox values based on a Center
+	 * @param {*} event
+	 */
 	setSpecialtiesByCenter(center) {
 		let specialtiesOptionsAux = [];
 		this.specialtiesByCenter[center].forEach((specialty) => {
@@ -129,19 +141,27 @@ export default class MyModal extends LightningModal {
 			});
 		});
 		this.specialtiesOptions = specialtiesOptionsAux;
+		if (specialtiesOptionsAux.length === 1) this.selectedSpecialty = specialtiesOptionsAux[0];
 	}
 
-	// Specialty Combobox - Handles the change of value
+	/**
+	 * Specialty Combobox - Handles the change of value
+	 * @param {*} event
+	 */
 	handleSpecialtyChange(event) {
-		let selectedLabel = event.target.options.find(opt => opt.value === event.detail.value).label;
+		let selectedLabel = event.target.options.find((opt) => opt.value === event.detail.value).label;
 		this.selectedSpecialty = {
 			label: selectedLabel,
-			value: event.detail.value
+			value: event.detail.value,
 		};
 	}
-	
+
+	/**
+	 * Get availability by specialty id
+	 * @param {String} specialtyId
+	 */
 	getAvailability(specialtyId) {
-		getAvalabilityBySpecialty({ specialtyId: "a017R00004EYcbQQAT" })
+		getAvalabilityBySpecialty({ specialtyId: specialtyId })
 			.then((result) => {
 				this.availableDays = result;
 				console.log("availableDays:", JSON.parse(JSON.stringify(result)));
@@ -151,31 +171,32 @@ export default class MyModal extends LightningModal {
 			});
 	}
 
+	/**
+	 * Select date on change handler
+	 * @param {*} event
+	 */
 	onSelectedDate(event) {
 		this.selectedDate = event.detail;
 	}
 
+	/**
+	 * Contact info on change handlers
+	 * @param {*} event
+	 */
 	onNameChange(event) {
-		console.log('event.target.value', event.target.value);
 		this.contactInfo.Name = event.target.value;
 	}
 	onEmailChange(event) {
-		console.log('event.target.value', event.target.value);
 		this.contactInfo.Email = event.target.value;
 	}
 	onPhoneChange(event) {
-		console.log('event.target.value', event.target.value);
 		this.contactInfo.Phone = event.target.value;
 	}
 	onObservationsChange(event) {
-		console.log('event.target.value', event.target.value);
 		this.contactInfo.Observations = event.target.value;
 	}
 
-	handleStepBlur(event) {
-		const stepIndex = event.detail.index;
-		console.log("stepIndex:");
-	}
+	// UI GET METHODS
 
 	get getHeaderLabel() {
 		switch (this.currentStep) {
@@ -219,21 +240,23 @@ export default class MyModal extends LightningModal {
 	get isNextDisabled() {
 		switch (this.currentStep) {
 			case "step1":
-				return !(this.selectedCenter.value !== '' && this.selectedSpecialty.value !== '');
+				return !(this.selectedCenter.value !== "" && this.selectedSpecialty.value !== "");
 
 			case "step2":
-				return !(this.selectedDate);
+				return !this.selectedDate;
 
 			case "step3":
-				return !(this.contactInfo.Name !== '' && this.contactInfo.Email !== '' && this.contactInfo.Phone !== '');
+				return !(this.contactInfo.Name !== "" && this.contactInfo.Email !== "" && this.contactInfo.Phone !== "");
 
 			case "step4":
 				return false;
-
 		}
 		return true;
 	}
 
+	/**
+	 * Goes forward in the wizard
+	 */
 	onNextButtonClick() {
 		switch (this.currentStep) {
 			case "step1":
@@ -258,10 +281,13 @@ export default class MyModal extends LightningModal {
 		}
 	}
 
+	/**
+	 * Goes backwards in the wizard
+	 */
 	onPreviousButtonClick() {
 		switch (this.currentStep) {
 			case "step1":
-				this.closeModal(false);
+				this.closeModal('cancel');
 				break;
 
 			case "step2":
@@ -281,11 +307,22 @@ export default class MyModal extends LightningModal {
 		}
 	}
 
-	closeModal(isBooked) {
+	/**
+	 * On modal's X button click
+	 */
+	onCloseButtonClick() {
+		this.closeModal('cancel');
+	}
+
+	/**
+	 * Closes the modal and dipatch an event to parent
+	 * @param {*} msg is appointment booked?
+	 */
+	closeModal(msg) {
 		try {
 			this.dispatchEvent(
 				new CustomEvent("close", {
-					detail: isBooked ? "booked-appointment" : "canceled",
+					detail: msg,
 				})
 			);
 			this.isOpen = false;
@@ -294,18 +331,31 @@ export default class MyModal extends LightningModal {
 		}
 	}
 
+	/**
+	 * Creates the appointment in the database
+	 */
 	createAppointment() {
-		let appointment = {
+		let wrapper = {
 			center: this.selectedCenter.value,
 			specialty: this.selectedSpecialty.value,
-			date: this.selectedDate.date,
-			time: this.selectedDate.time,
+			newDate: this.selectedDate.date,
+			newTime: this.selectedDate.time,
 			name: this.contactInfo.Name,
 			email: this.contactInfo.Email,
 			phone: this.contactInfo.Phone,
 			observations: this.contactInfo.Observations,
-		}
-		console.log('appointment', JSON.parse(JSON.stringify(appointment)));
-		this.closeModal(true);
+		};
+		console.log("appointment wrapper", JSON.parse(JSON.stringify(wrapper)));
+
+		createNewAppointment({ appointment: wrapper })
+			.then((result) => {
+				console.log("createNewAppointment.result:", JSON.parse(JSON.stringify(result)));
+				this.closeModal('booked');
+			})
+			.catch((error) => {
+				console.error("createNewAppointment.error", error);
+				this.closeModal('error');
+			});
+
 	}
 }

@@ -9,16 +9,19 @@
 				BEAUTY CENTER
 			</h2>
 			<p>
-				¡Luce y siéntete increíble con nosotros! Ofrecemos una amplia gama de servicios de belleza, desde cortes de cabello y
-				coloración hasta peinados y tratamientos faciales. Reserva tu cita hoy mismo y descubre
-				la diferencia que podemos hacer en tu apariencia y tu confianza.
+				Look and feel amazing with us! We offer a wide range of beauty services, from haircuts and coloring to
+				hairstyles and facial treatments. Book your appointment today and discover the difference we can make in
+				your appearance and your confidence.
 			</p>
 			<hr />
 			<div class="button-bar">
-				<button type="button" class="button-cita" onclick={onPideCitaClick}>PIDE CITA</button>
+				<button type="button" class="button-cita" onclick={onPideCitaClick}>NEW APPOINTMENT</button>
 			</div>
 		</div>
 	</div>
 
-	<c-am_appointmentwizard is-open={isAppointmentModalOpen} onclose={onAppointmentModalClosed}></c-am_appointmentwizard>
+	<c-am_toast></c-am_toast>
+
+	<c-am_appointmentwizard is-open={isAppointmentModalOpen}
+		onclose={onAppointmentModalClosed}></c-am_appointmentwizard>
 </template>

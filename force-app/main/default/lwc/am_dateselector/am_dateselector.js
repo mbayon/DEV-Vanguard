@@ -58,6 +58,8 @@ export default class Am_dateselector extends LightningElement {
 	 * Generates the calendar to be shown on the component taking into account 
 	 * the current month and the api param availability
 	 * @param {Date} d full date object
+	 * 
+	 * TODO: Remove Appointments from Availability
 	 */
 	generateCalendar(d) {
 		Date.prototype.monthDays = function () {
