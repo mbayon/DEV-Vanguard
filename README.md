@@ -1,5 +1,5 @@
 # Practice Exercise
-# Salesforce Senior Developer
+Salesforce Senior Developer
 
 ## Use Cases
 
